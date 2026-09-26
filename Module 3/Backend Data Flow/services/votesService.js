@@ -11,6 +11,14 @@ const AppError = require('./../utils/AppError');
  */
 exports.castVote = async (postId, userId) => {
   throw new AppError('castVote is not implemented yet', 501);
+  const post = await postsRepo.findById(postId);
+  if(!post) {
+    throw new AppError('Post not found', 404);
+  }   
+  const existingVote = await votesRepo.find(postId, userId);
+  if(existingVote) {
+    throw new AppError('You have already voted on this post', 409);
+  }
 };
 
 exports.countFor = async (postId) => votesRepo.countByPost(postId);

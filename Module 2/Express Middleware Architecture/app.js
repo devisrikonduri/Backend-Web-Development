@@ -39,9 +39,9 @@ app.use(express.json());
 // TODO: mount your GLOBAL middleware here, BEFORE the routers, in a deliberate
 //       order. request-id must run first so the logger and timer can read req.id.
 //
-//   app.use(requestId);
-//   app.use(logger);
-//   app.use(timing);
+   app.use(requestId);
+   app.use(logger);
+   app.use(timing);
 // ─────────────────────────────────────────────────────────────────────────────
 
 // Two mounted routers (do not remove these).

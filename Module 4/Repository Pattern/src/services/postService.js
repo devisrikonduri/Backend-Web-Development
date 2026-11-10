@@ -1,43 +1,61 @@
-const postStore = require('../data/postStore');
+const postRepo = require('../repositories/postRepository');
 
+/**
+ * Retrieves all posts from the repository.
+ * @returns {Array} List of post objects.
+ */
 function listPosts() {
-  return postStore.posts;
+  return postRepo.findAll();
 }
 
+/**
+ * Retrieves a single post by its ID.
+ * @param {number|string} id 
+ * @returns {Object|null} Post object if found, otherwise null.
+ */
 function getPost(id) {
-  return postStore.posts.find((post) => post.id === Number(id)) || null;
+  return postRepo.findById(id);
 }
 
+/**
+ * Enforces business logic/validation and creates a new post via the repository.
+ * @param {Object} fields 
+ * @returns {Object} Created post object with generated ID.
+ */
 function createPost(fields) {
+  // Business validation rule stays inside the service layer
   if (!fields || !fields.title) {
     const error = new Error('Title is required');
     error.statusCode = 422;
     throw error;
   }
 
-  const post = {
-    id: postStore.nextId(),
-    title: fields.title,
-    body: fields.body || '',
-    authorId: fields.authorId,
-  };
-  postStore.posts.push(post);
-  return post;
+  return postRepo.create(fields);
 }
 
+/**
+ * Updates an existing post by ID.
+ * @param {number|string} id 
+ * @param {Object} patch 
+ * @returns {Object|null} Updated post object or null if not found.
+ */
 function updatePost(id, patch) {
-  const post = getPost(id);
-  if (!post) return null;
-  if (patch.title !== undefined) post.title = patch.title;
-  if (patch.body !== undefined) post.body = patch.body;
-  return post;
+  return postRepo.update(id, patch);
 }
 
+/**
+ * Removes a post by ID.
+ * @param {number|string} id 
+ * @returns {boolean} True if deleted, false if not found.
+ */
 function removePost(id) {
-  const index = postStore.posts.findIndex((post) => post.id === Number(id));
-  if (index === -1) return false;
-  postStore.posts.splice(index, 1);
-  return true;
+  return postRepo.remove(id);
 }
 
-module.exports = { listPosts, getPost, createPost, updatePost, removePost };
+module.exports = {
+  listPosts,
+  getPost,
+  createPost,
+  updatePost,
+  removePost,
+};
